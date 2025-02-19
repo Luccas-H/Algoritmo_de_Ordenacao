@@ -13,7 +13,7 @@ struct Ordenar{
     unsigned long comparacao;
 }; 
 
-void Menu();
+int Menu();
 
 void CriandoArquivos(int tamanho, const char *NOMEARQUIVO,int contaArquivo)
 {
@@ -443,11 +443,11 @@ void OrdenarArquivos(const char *NOMEARQUIVO, const char *NOVOARQUIVO)
     }
 
 }
-void Menu()
+int Menu()
 {
     int escolha;
     int contaArquivo = 0;
-    while(escolha != 3)
+    while(1)
     {
 
         printf("Escolha uma das opcoes: \n");
@@ -457,10 +457,6 @@ void Menu()
         printf("3-Fechar programa \n");
         printf(":");
         scanf("%d", &escolha);
-        while (getchar() != '\n');  // Limpa buffer de entrada
-
-        system("cls");
-
         switch (escolha)
         {
         case 0:
@@ -480,13 +476,14 @@ void Menu()
             /*CODE*/
             break;
         case 3:
+            system("cls");
             printf("Saindo do sistema!!!!");
             Sleep(1000);
-            system("cls");
+            return 0;
             break;
         default:
-            printf("ERRO! \nESCOLHA NAO EXISTE\n");
-            Sleep(1000);
+        printf("ERRO! \nESCOLHA NAO EXISTE\n");
+        Sleep(1000);
             system("cls");
             break;
         }
@@ -497,6 +494,7 @@ void Menu()
 int main()
 {
     Menu();
+    system("cls");
     system("Pause");
     return 0;
 }
