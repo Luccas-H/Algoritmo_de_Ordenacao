@@ -380,11 +380,116 @@ void printQuick(int n, int vet[], int min, const char *NOVOARQUIVO, struct Orden
 }
 /*FIM Quick*/
 
+/*INICIO Merge*/
+void merge(int vet[], int esq, int meio, int direita, struct Ordenar *contar)
+{
+    int i,j,k;
+    int numero1 = meio - esq + 1;
+    int numero2 = direita - meio;
+
+    int *left =(int *)malloc(numero1 * sizeof(int));
+    int *right =(int *)malloc(numero2 * sizeof(int));
+
+    for(i = 0; i < numero1; i++)
+    {
+        contar ->trocas++;
+        left[i] = vet[esq +i];
+    }
+    for(j = 0; j<numero2;j++)
+    {
+        contar ->trocas++;
+        right[j] = vet[meio +1+j];
+    }
+
+    i =0; 
+    j =0;
+    k = esq;
+    while(i<numero1 && j<numero2)
+    {
+        contar->comparacao++;
+        if(left[i] <= right[j])
+        {
+            contar ->trocas++;
+            vet[k] = left[i];
+            i++;
+        }
+        else
+        {
+            contar -> trocas++;
+            vet[k] = right[j];
+            j++;
+        }
+        k++;
+    }
+
+    while(i<numero1)
+    {
+        contar->comparacao++;
+        contar ->trocas++;
+        vet[k] = left[i];
+        i++;
+        k++;
+
+    }
+    while(j<numero2)
+    {
+        contar->comparacao++;
+        contar ->trocas++;
+        vet[k] = right[j];
+        j++;
+        k++;
+
+    }
+
+    free(left);
+    free(right);
+}
+
+void mergesort(int vet[], int esq, int direita, struct Ordenar *contar)
+{
+    contar->comparacao++;
+    if(esq < direita)
+    {
+        int meio = esq + (direita - esq) / 2;
+
+        mergesort(vet,esq,meio, contar);
+        mergesort(vet,meio + 1,direita, contar);
+        merge(vet,esq,meio,direita,contar);
+    }
+}
+void printMerge(int vet[], int esq, int direita, const char *NOVOARQUIVO, struct Ordenar *contar)
+{
+    clock_t start, end;
+    start = clock();
+    mergesort(vet,esq,direita,contar);
+    end = clock();
+
+    double tempoexec = ((double)(end - start)) / CLOCKS_PER_SEC;
+
+    printf("MERGE SORT:\n");
+    printf("Trocas = %lu | Comparacoes = %lu\n", contar->trocas, contar->comparacao);
+    printf("Tempo de execucao: %.9lfs (%.5lf ms)\n\n", tempoexec, tempoexec * 1000);
+
+    contar->comparacao = 0;
+    contar->trocas = 0;
+
+    char novoOrdenado[50];
+    sprintf(novoOrdenado, "%s_MERGE.txt", NOVOARQUIVO);
+    
+    FILE* mergeOrdenado = fopen(novoOrdenado, "w");
+    for(int k = 0; k<= direita; k++)
+    {
+        fprintf(mergeOrdenado, "%d ", vet[k]);
+    }
+    fclose(mergeOrdenado);
+}
+/*FIM Merge*/
+
 void OrdenarArquivos(const char *NOMEARQUIVO, const char *NOVOARQUIVO)
 {
     int escolhaOrdenacao;
     printf("Escolha uma das opcoes de ordenacao\n");
-    printf("1-SelectionSort \n2-InsertionSort \n3-BubbleSort \n4-HeapSort \n5-RadixSort \n6-QuickSort \n7-MergeSort \n 8-Voltar");
+    printf("1-SelectionSort \n2-InsertionSort \n3-BubbleSort \n4-HeapSort \n5-RadixSort \n6-QuickSort \n7-MergeSort \n8-Voltar \n");
     printf(":");
     scanf("%d", &escolhaOrdenacao);
 
@@ -429,8 +534,8 @@ void OrdenarArquivos(const char *NOMEARQUIVO, const char *NOVOARQUIVO)
         printQuick(tamanho -1,numeros, 0, NOVOARQUIVO,&contar);
         break;
     case 7:
-        /* code */ //merge
         printf("Arquivo selecionado: %s\n", NOMEARQUIVO);    
+        printMerge(numeros, 0, tamanho - 1,NOVOARQUIVO,&contar);
         break;
     case 8:
         system("cls");
@@ -443,6 +548,110 @@ void OrdenarArquivos(const char *NOMEARQUIVO, const char *NOVOARQUIVO)
     }
 
 }
+
+void BuscaSequencial(int n, int vet[], int numeroEscolhido, struct Ordenar *contar)
+{
+    int posicao = -1;
+    
+    for (int i = 0; i<n; i++)
+    {
+        contar->comparacao++;
+        if(vet[i] == numeroEscolhido)
+        {
+            posicao = i;
+            break;
+        }
+    }
+    if(posicao == -1)
+    {
+        printf("O numero %d nao esta na lista\n", numeroEscolhido);
+    }
+    else
+    {
+        printf("O numero %d esta na posicao %d da lista\n", numeroEscolhido, posicao);
+        printf("O numero de comparacoes para achar %d foi de %d\n", numeroEscolhido, contar->comparacao);
+    }
+    contar->comparacao = 0;
+}
+void BuscaBinaria(int n, int vet[], int numeroEscolhido, struct Ordenar *contar)
+{
+    int esquerd = 0, direita = n - 1;
+    int meio, posicao = - 1;
+
+    while(esquerd  <= direita)
+    {
+        contar->comparacao++;
+        meio = (esquerd + direita) /2;
+
+        if(vet[meio] == numeroEscolhido)
+        {
+            posicao = meio;
+            break;
+        }
+        else if(vet[meio] < numeroEscolhido)
+        {
+            esquerd = meio+1;
+        }
+        else
+        {
+            direita = meio-1;
+        }
+    }
+    if(posicao == -1)
+    {
+        printf("O numero %d nao foi encontrado\n",numeroEscolhido);
+    }
+    else
+    {
+        printf("O numero %d foi encontrado na posicao %d \n", numeroEscolhido, posicao);
+        printf("O numero de comparacoes: %lu\n", contar->comparacao);
+    }
+    contar->comparacao = 0;
+}
+void Buscar(const char *NOMEARQUIVO)
+{
+    FILE* fp = fopen(NOMEARQUIVO, "r");
+    int *numeros = malloc(TAMANHO100000 * sizeof(int));
+    int tamanho = 0;
+    while (fscanf(fp, "%d", &numeros[tamanho]) != EOF) {
+        tamanho++;
+    }
+    fclose(fp);
+
+    
+    struct Ordenar contar = {0,0};
+
+    int escolhaBusca;
+    int numeroEscolhido;
+    printf("Escolha uma das opcoes\n");
+    printf("1-Busca Sequencial \n2-Busca Binaria\n");
+    printf(":");
+    scanf("%d", &escolhaBusca);
+
+    printf("Digite o numero que deseja buscar\n");
+    printf(":");
+    scanf("%d", &numeroEscolhido);
+
+    switch (escolhaBusca)
+    {
+    case 1:
+        printf("Buscando no arquivo: %s\n", NOMEARQUIVO);
+        BuscaSequencial(tamanho, numeros, numeroEscolhido, &contar);
+        break;
+    case 2:
+        printf("Ordenando com radix: %s\n", NOMEARQUIVO);
+        radix(tamanho, numeros, NOMEARQUIVO);
+        BuscaBinaria(tamanho, numeros, numeroEscolhido, &contar);
+        break;
+    
+    default:
+        printf("ERRO! \nEssa escolha nao existe!\n");
+        break;
+    }
+
+    
+}
+
 int Menu()
 {
     int escolha;
@@ -453,7 +662,7 @@ int Menu()
         printf("Escolha uma das opcoes: \n");
         printf("0-Gerar arquivos \n");
         printf("1-Ordenar arquivos \n");
-        printf("2-Busca Binaria arquivos \n");
+        printf("2-Busca \n");
         printf("3-Fechar programa \n");
         printf(":");
         scanf("%d", &escolha);
@@ -473,7 +682,10 @@ int Menu()
             OrdenarArquivos("ARQUIVO100000.txt","ARQUIVO100000_ORDENADO");
             break;
         case 2:
-            /*CODE*/
+            Buscar("ARQUIVO100.txt");
+            Buscar("ARQUIVO1000.txt");
+            Buscar("ARQUIVO10000.txt");
+            Buscar("ARQUIVO100000.txt");
             break;
         case 3:
             system("cls");
