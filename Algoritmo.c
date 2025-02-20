@@ -29,8 +29,8 @@ void CriandoArquivos(int tamanho, const char *NOMEARQUIVO,int contaArquivo)
     {
         printf("ERRO AO CRIAR ARQUIVO\n");
     }
-    
-    printf("O arquivo foi criado com sucesso! \n");
+    system("cls");
+    printf("O arquivo com %d numeros aleatorios foi criado com sucesso! \n", contaArquivo);
     Sleep(1000);
     system("cls");
 }
@@ -175,8 +175,8 @@ void insertion(int n, int vet[], const char *NOVOARQUIVO, struct Ordenar *contar
 void heapify(int n, int vet[], int i, struct Ordenar *contar)// Verificar o 100.000 quando chegar em casa.
 {
     int maior = i;
-    int l = i + 1;
-    int r = i + 2; 
+    int l = 2*i + 1;
+    int r = 2*i + 2; 
 
     contar->comparacao++;
     if(l < n && vet[l] > vet[maior])
@@ -635,13 +635,17 @@ void Buscar(const char *NOMEARQUIVO)
     switch (escolhaBusca)
     {
     case 1:
+        system("cls");
         printf("Buscando no arquivo: %s\n", NOMEARQUIVO);
         BuscaSequencial(tamanho, numeros, numeroEscolhido, &contar);
+        printf("\n");
         break;
     case 2:
+        system("cls");
         printf("Ordenando com radix: %s\n", NOMEARQUIVO);
         radix(tamanho, numeros, NOMEARQUIVO);
         BuscaBinaria(tamanho, numeros, numeroEscolhido, &contar);
+        printf("\n");
         break;
     
     default:
@@ -655,7 +659,7 @@ void Buscar(const char *NOMEARQUIVO)
 int Menu()
 {
     int escolha;
-    int contaArquivo = 0;
+    int contaArquivo = 10;
     while(1)
     {
 
@@ -670,18 +674,20 @@ int Menu()
         {
         case 0:
             srand(time(NULL));
-            CriandoArquivos(TAMANHO100, "ARQUIVO100.txt",contaArquivo++);
-            CriandoArquivos(TAMANHO1000,"ARQUIVO1000.txt",contaArquivo++);
-            CriandoArquivos(TAMANHO10000,"ARQUIVO10000.txt",contaArquivo++);
-            CriandoArquivos(TAMANHO100000,"ARQUIVO100000.txt",contaArquivo);
+            CriandoArquivos(TAMANHO100, "ARQUIVO100.txt",contaArquivo*=10);
+            CriandoArquivos(TAMANHO1000,"ARQUIVO1000.txt",contaArquivo*=10);
+            CriandoArquivos(TAMANHO10000,"ARQUIVO10000.txt",contaArquivo*=10);
+            CriandoArquivos(TAMANHO100000,"ARQUIVO100000.txt",contaArquivo*=10);
             break;
-        case 1:           
+        case 1:
+            system("cls");           
             OrdenarArquivos("ARQUIVO100.txt","ARQUIVO100_ORDENADO");
             OrdenarArquivos("ARQUIVO1000.txt","ARQUIVO1000_ORDENADO");
             OrdenarArquivos("ARQUIVO10000.txt","ARQUIVO10000_ORDENADO");
             OrdenarArquivos("ARQUIVO100000.txt","ARQUIVO100000_ORDENADO");
             break;
         case 2:
+            system("cls");
             Buscar("ARQUIVO100.txt");
             Buscar("ARQUIVO1000.txt");
             Buscar("ARQUIVO10000.txt");
